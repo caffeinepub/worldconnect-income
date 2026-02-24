@@ -1,0 +1,24 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-update-the-withdrawal-form-in-frontend-src-pages-withdrawalpage-tsx-to-display-the-maximum-allowed-withdrawal-amount-1-of-balance-and-add-client-side-validation-to-prevent-users-from-submitting-amounts-exceeding-this-limit",
+      "featureTitle": "Update the withdrawal form in frontend/src/pages/WithdrawalPage.tsx to display the maximum allowed withdrawal amount (1% of balance) and add client-side validation to prevent users from submitting amounts exceeding this limit",
+      "files": [
+        "frontend/src/pages/WithdrawalPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-22"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

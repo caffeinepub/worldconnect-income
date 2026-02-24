@@ -1,0 +1,45 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-24T09:13:27.308Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 2,
+    "implemented": 1,
+    "items": [
+      {
+        "id": "REQ-21",
+        "summary": "Add a 1% withdrawal limit validation in the backend withdrawal request creation logic in backend/main.mo that calculates the maximum allowed withdrawal amount as 1% of the user's current balance and rejects withdrawal requests that exceed this limit",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-22",
+        "summary": "Update the withdrawal form in frontend/src/pages/WithdrawalPage.tsx to display the maximum allowed withdrawal amount (1% of balance) and add client-side validation to prevent users from submitting amounts exceeding this limit",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/WithdrawalPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/WithdrawalPage.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/main.mo",
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/pages/WithdrawalPage.tsx",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

@@ -1,0 +1,277 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 15,
+  "summary": "WorldConnect Income - Admin panel and mobile app with authentication, financial transactions, referral income tracking, and multi-level membership system",
+  "architectural_notes": [
+    "Mobile app with admin panel (contact: 9422018674)",
+    "Multi-level marketing (MLM) income structure",
+    "₹100 special plan mentioned",
+    "Phone-based authentication required",
+    "New 10-level income structure with member counts: 10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120",
+    "Withdrawal limit: 1% (interpretation needed - 1% of balance, deposit amount, or total earnings)"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-implement-phone-number-mobile-login-with-otp-verification-system-using-the-contact-number-9422018674-for-admin-access",
+      "title": "Implement phone number (mobile) login with OTP verification system using the contact number 9422018674 for admin access",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-user-registration-system-with-100-registration-fee-requirement",
+      "title": "Create user registration system with ₹100 registration fee requirement",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-deposit-functionality-allowing-users-to-add-funds-to-their-account",
+      "title": "Implement deposit functionality allowing users to add funds to their account",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-withdrawal-functionality-allowing-users-to-withdraw-funds-from-their-account",
+      "title": "Implement withdrawal functionality allowing users to withdraw funds from their account",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-multi-level-income-system-with-10-levels-level-1-5-members-100-level-2-25-members-1-000-level-3-125-members-3-000-level-4-625-members-9-000-level-5-3-125-members-12-000-level-6-15-625-members-24-000-level-7-78-125-members-35-000-level-8-3-90-625-members-goa-tour-level-9-19-53-125-members-80-000-level-10-97-65-625-members-1-00-000-foreign-tour-as-shown-in-the-uploaded-varad-finance-image",
+      "title": "Build multi-level income system with 10 levels (Level 1: 5 members/₹100, Level 2: 25 members/₹1,000, Level 3: 125 members/₹3,000, Level 4: 625 members/₹9,000, Level 5: 3,125 members/₹12,000, Level 6: 15,625 members/₹24,000, Level 7: 78,125 members/₹35,000, Level 8: 3,90,625 members/Goa Tour, Level 9: 19,53,125 members/₹80,000, Level 10: 97,65,625 members/₹1,00,000 + Foreign Tour) as shown in the uploaded Varad Finance image",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-loan-referral-income-tracking-system-for-members-who-refer-loans",
+      "title": "Implement loan referral income tracking system for members who refer loans",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-member-referral-income-tracking-system-for-direct-member-recruitment",
+      "title": "Implement member referral income tracking system for direct member recruitment",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-deposit-and-withdrawal-history-view-showing-all-transaction-records",
+      "title": "Create deposit and withdrawal history view showing all transaction records",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-comprehensive-admin-panel-for-system-management-with-special-access-for-phone-number-9422018674",
+      "title": "Build comprehensive admin panel for system management with special access for phone number 9422018674",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-design-frontend-with-a-professional-financial-services-theme-inspired-by-the-varad-finance-branding-gold-and-navy-blue-color-scheme-with-tropical-beach-imagery-maintaining-clean-layouts-for-financial-dashboards-and-transaction-interfaces",
+      "title": "Design frontend with a professional financial services theme inspired by the Varad Finance branding (gold and navy blue color scheme with tropical beach imagery), maintaining clean layouts for financial dashboards and transaction interfaces",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-upi-qr-code-on-the-deposit-page-showing-the-payment-details-santosh-ramabhau-more-with-upi-id-9422018674-kotak811-for-users-to-scan-and-make-deposit-payments",
+      "title": "Display UPI QR code on the deposit page showing the payment details 'Santosh Ramabhau More' with UPI ID '9422018674@kotak811' for users to scan and make deposit payments",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-instructions-on-the-deposit-page-explaining-that-users-should-scan-the-qr-code-complete-the-upi-payment-for-their-deposit-amount-and-then-submit-the-deposit-form",
+      "title": "Add instructions on the deposit page explaining that users should scan the QR code, complete the UPI payment for their deposit amount, and then submit the deposit form",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-review-the-existing-withdrawal-page-to-ensure-it-includes-comprehensive-validation-for-withdrawal-amount-must-not-exceed-available-balance-bank-account-number-format-validation-and-ifsc-code-format-validation",
+      "title": "Review the existing withdrawal page to ensure it includes comprehensive validation for withdrawal amount (must not exceed available balance), bank account number format validation, and IFSC code format validation",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-admin-withdrawal-approval-workflow-in-the-adminrequestspage-allowing-admins-to-view-pending-withdrawal-requests-approve-or-reject-them-and-update-user-balances-accordingly",
+      "title": "Implement admin withdrawal approval workflow in the AdminRequestsPage allowing admins to view pending withdrawal requests, approve or reject them, and update user balances accordingly",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-withdrawal-transaction-history-in-the-transactionhistorypage-showing-all-user-s-withdrawal-requests-with-their-status-pending-approved-rejected-amounts-dates-and-bank-details",
+      "title": "Display withdrawal transaction history in the TransactionHistoryPage showing all user's withdrawal requests with their status (pending, approved, rejected), amounts, dates, and bank details",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-existing-navy-blue-and-gold-color-scheme-with-a-professional-purple-violet-theme-matching-the-uploaded-reference-image-updating-all-css-variables-in-frontend-index-css-and-frontend-tailwind-config-js-to-use-purple-as-the-primary-brand-color-while-maintaining-the-existing-color-token-structure",
+      "title": "Replace the existing navy blue and gold color scheme with a professional purple/violet theme matching the uploaded reference image, updating all CSS variables in frontend/index.css and frontend/tailwind.config.js to use purple as the primary brand color while maintaining the existing color token structure",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-all-component-styling-to-reflect-the-purple-color-scheme-including-buttons-cards-badges-navigation-elements-and-status-indicators-across-all-pages-dashboard-deposit-withdrawal-levels-referrals-transactions-admin-pages",
+      "title": "Update all component styling to reflect the purple color scheme, including buttons, cards, badges, navigation elements, and status indicators across all pages (Dashboard, Deposit, Withdrawal, Levels, Referrals, Transactions, Admin pages)",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-level-structure-configuration-in-frontend-src-constants-levelstructure-ts-to-reflect-the-new-10-level-system-with-team-sizes-10-20-40-80-160-320-640-1280-2560-5120-and-rewards-100-500-1-000-2-500-3-500-4-500-7-000-10-000-15-000-25-000-respectively",
+      "title": "Update the level structure configuration in frontend/src/constants/levelStructure.ts to reflect the new 10-level system with team sizes [10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120] and rewards [₹100, ₹500, ₹1,000, ₹2,500, ₹3,500, ₹4,500, ₹7,000, ₹10,000, ₹15,000, ₹25,000] respectively",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-withdrawal-form-in-frontend-src-pages-withdrawalpage-tsx-to-display-the-maximum-allowed-withdrawal-amount-1-of-balance-and-add-client-side-validation-to-prevent-users-from-submitting-amounts-exceeding-this-limit",
+      "title": "Update the withdrawal form in frontend/src/pages/WithdrawalPage.tsx to display the maximum allowed withdrawal amount (1% of balance) and add client-side validation to prevent users from submitting amounts exceeding this limit",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Phone number login with OTP authentication",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "User registration system",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Deposit and withdrawal functionality",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Level income tracking system",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Loan referral income tracking",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Member referral income tracking",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Total level display for members",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Deposit and withdrawal history tracking",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Admin panel for system management",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Add barcode/QR code for deposits",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Ensure withdrawal requests are properly stored in the backend with pending status and track all withdrawal attempts including timestamp, amount, bank details, and user principal",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Update UI with professional color design/scheme",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Update multi-level income system to new structure: Level 1: 10 members/₹100, Level 2: 20 members/₹500, Level 3: 40 members/₹1,000, Level 4: 80 members/₹2,500, Level 5: 160 members/₹3,500, Level 6: 320 members/₹4,500, Level 7: 640 members/₹7,000, Level 8: 1,280 members/₹10,000, Level 9: 2,560 members/₹15,000, Level 10: 5,120 members/₹25,000",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Update the backend level validation and calculation logic in backend/main.mo to use the new team size thresholds [10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120] when determining user levels based on their team member count",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Implement 1% withdrawal limit based on balance or deposits",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Add a 1% withdrawal limit validation in the backend withdrawal request creation logic in backend/main.mo that calculates the maximum allowed withdrawal amount as 1% of the user's current balance and rejects withdrawal requests that exceed this limit",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "WorldConnect Income",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

@@ -1,0 +1,23 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Implement 1% withdrawal limit",
+  "requirements": [
+    {
+      "id": "REQ-22",
+      "summary": "Update withdrawal form to display and validate 1% withdrawal limit",
+      "acceptanceCriteria": [
+        "Maximum withdrawal amount (1% of balance) is clearly displayed on the withdrawal page",
+        "Form validation prevents submission of amounts exceeding the 1% limit",
+        "Error message shows the exact maximum amount allowed when user enters too much"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/WithdrawalPage.tsx",
+          "operation": "modify",
+          "description": "Add display of maximum allowed withdrawal amount (1% of user's balance) above the amount input field. Implement client-side validation that calculates maxWithdrawal = balance * 0.01 and prevents form submission when entered amount exceeds this limit. Show error message indicating the exact maximum amount allowed (formatted as INR) when validation fails. Use the existing useGetCallerUserProfile hook to access current balance and integrate with existing form validation logic."
+        }
+      ]
+    }
+  ]
+}
