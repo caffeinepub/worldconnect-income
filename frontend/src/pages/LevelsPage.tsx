@@ -1,48 +1,70 @@
 import React from 'react';
-import { useGetCallerUserProfile } from '../hooks/useQueries';
+import { useGetCallerUserProfile, useGetTotalTeamSize, useGetTotalLevelIncome } from '../hooks/useQueries';
+import { Card, CardContent } from '@/components/ui/card';
+import { TrendingUp, IndianRupee } from 'lucide-react';
 import LevelProgressCard from '../components/levels/LevelProgressCard';
 import LevelStructureTable from '../components/levels/LevelStructureTable';
-import { Card, CardContent } from '@/components/ui/card';
+import AmountDisplay from '../components/common/AmountDisplay';
 
 export default function LevelsPage() {
-  const { data: userProfile, isLoading } = useGetCallerUserProfile();
+  const { data: profile, isLoading: profileLoading } = useGetCallerUserProfile();
+  const { data: totalTeamSize, isLoading: teamLoading } = useGetTotalTeamSize();
+  const { data: totalLevelIncome, isLoading: levelIncomeLoading } = useGetTotalLevelIncome();
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading level information...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!userProfile) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Card className="max-w-md">
-          <CardContent className="pt-6">
-            <p className="text-center text-muted-foreground">No profile found. Please complete registration.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  const level = profile ? Number(profile.level) : 0;
+  const teamSize = totalTeamSize ? Number(totalTeamSize) : 0;
+  const levelIncome = totalLevelIncome ? Number(totalLevelIncome) : 0;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-2xl p-8 text-white shadow-xl">
-        <h1 className="text-3xl font-bold mb-2 font-display">Level Income System</h1>
-        <p className="text-purple-100">Track your progress and understand the reward structure</p>
+      <div className="bg-gradient-to-r from-red-700 to-red-600 rounded-2xl p-6 text-white shadow-red-lg">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+            <TrendingUp className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-heading font-bold">Level Income</h1>
+            <p className="text-red-200 text-sm">Track your progress and unlock rewards</p>
+          </div>
+        </div>
       </div>
 
-      {/* User Progress */}
-      <LevelProgressCard userProfile={userProfile} />
+      {/* Level Income Summary Card */}
+      <Card className="border border-red-100 shadow-sm bg-white">
+        <CardContent className="p-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                <IndianRupee className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground font-medium">Total Level Income Earned</p>
+                {levelIncomeLoading ? (
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-600 mt-1"></div>
+                ) : (
+                  <AmountDisplay amount={levelIncome} size="lg" className="text-red-700 text-2xl font-bold" />
+                )}
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-muted-foreground">Current Level</p>
+              <p className="text-2xl font-bold text-red-700">{level}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Level Structure */}
-      <LevelStructureTable currentLevel={Number(userProfile.level)} />
+      {profileLoading || teamLoading ? (
+        <div className="flex items-center justify-center min-h-32">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+        </div>
+      ) : (
+        <>
+          <LevelProgressCard level={level} teamSize={teamSize} />
+          <LevelStructureTable currentLevel={level} />
+        </>
+      )}
     </div>
   );
 }

@@ -1,8 +1,16 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Trophy } from 'lucide-react';
 import { levelStructure } from '../../constants/levelStructure';
-import AmountDisplay from '../common/AmountDisplay';
 
 interface LevelStructureTableProps {
   currentLevel: number;
@@ -10,46 +18,71 @@ interface LevelStructureTableProps {
 
 export default function LevelStructureTable({ currentLevel }: LevelStructureTableProps) {
   return (
-    <Card className="border-purple-200 shadow-card">
+    <Card className="border-red-100 shadow-red-sm">
       <CardHeader>
-        <CardTitle className="font-display">Complete Level Structure</CardTitle>
+        <CardTitle className="font-heading text-base flex items-center gap-2">
+          <Trophy className="w-5 h-5 text-red-600" />
+          Level Structure
+        </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-purple-50 dark:bg-purple-900/20">
-                <TableHead className="font-semibold">Level</TableHead>
-                <TableHead className="font-semibold">Team Size Required</TableHead>
-                <TableHead className="font-semibold">Reward</TableHead>
+              <TableRow className="bg-red-50">
+                <TableHead className="text-red-700">Level</TableHead>
+                <TableHead className="text-red-700">Team Size</TableHead>
+                <TableHead className="text-red-700">Reward</TableHead>
+                <TableHead className="text-red-700">Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {levelStructure.map((level) => {
-                const isCurrentLevel = level.level === currentLevel;
-                const isSpecialLevel = level.level === 9 || level.level === 10;
-
+              {levelStructure.map((levelData) => {
+                const isCurrentLevel = levelData.level === currentLevel;
+                const isAchieved = levelData.level < currentLevel;
                 return (
                   <TableRow
-                    key={level.level}
-                    className={`
-                      ${isCurrentLevel ? 'bg-purple-100 dark:bg-purple-900/30 font-semibold' : ''}
-                      ${isSpecialLevel && !isCurrentLevel ? 'bg-purple-50 dark:bg-purple-900/10' : ''}
-                      hover:bg-purple-50/50 dark:hover:bg-purple-900/20
-                    `}
+                    key={levelData.level}
+                    className={
+                      isCurrentLevel
+                        ? 'bg-red-50 border-l-4 border-l-red-600'
+                        : isAchieved
+                        ? 'bg-green-50/50'
+                        : ''
+                    }
                   >
                     <TableCell>
                       <div className="flex items-center gap-2">
+                        <span className={`font-bold ${isCurrentLevel ? 'text-red-700' : ''}`}>
+                          {levelData.level}
+                        </span>
                         {isCurrentLevel && (
-                          <img src="/assets/generated/level-badge.dim_128x128.png" alt="Current" className="h-5 w-5" />
+                          <Badge className="bg-red-600 text-white border-0 text-xs px-1.5 py-0">
+                            Current
+                          </Badge>
                         )}
-                        <span className={isCurrentLevel ? 'text-primary' : ''}>Level {level.level}</span>
                       </div>
                     </TableCell>
-                    <TableCell>{level.teamSize.toLocaleString('en-IN')}</TableCell>
+                    <TableCell className={isCurrentLevel ? 'text-red-700 font-medium' : ''}>
+                      {levelData.teamSize.toLocaleString()}
+                    </TableCell>
+                    <TableCell className={isCurrentLevel ? 'text-red-700 font-bold' : 'font-medium'}>
+                      ₹{levelData.reward.toLocaleString()}
+                    </TableCell>
                     <TableCell>
-                      <AmountDisplay amount={level.reward} />
-                      {isSpecialLevel && <span className="ml-2 text-xs text-purple-600">+ Tour Package</span>}
+                      {isCurrentLevel ? (
+                        <Badge className="bg-red-100 text-red-700 border border-red-300 text-xs">
+                          Active
+                        </Badge>
+                      ) : isAchieved ? (
+                        <Badge className="bg-green-100 text-green-700 border border-green-300 text-xs">
+                          Achieved
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-xs text-muted-foreground">
+                          Locked
+                        </Badge>
+                      )}
                     </TableCell>
                   </TableRow>
                 );

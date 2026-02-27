@@ -4,8 +4,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from '@/components/ui/sonner';
 import { useInternetIdentity } from './hooks/useInternetIdentity';
-import { useGetCallerUserProfile } from './hooks/useQueries';
+import { useGetCallerUserProfile, useSaveCallerUserProfile } from './hooks/useQueries';
 import ProfileSetupModal from './components/auth/ProfileSetupModal';
+import type { UserProfile } from './backend';
 
 import LoginPage from './pages/LoginPage';
 import RegistrationPage from './pages/RegistrationPage';
@@ -13,8 +14,6 @@ import DashboardPage from './pages/DashboardPage';
 import DepositPage from './pages/DepositPage';
 import WithdrawalPage from './pages/WithdrawalPage';
 import LevelsPage from './pages/LevelsPage';
-import LoanReferralsPage from './pages/LoanReferralsPage';
-import MemberReferralsPage from './pages/MemberReferralsPage';
 import TransactionHistoryPage from './pages/TransactionHistoryPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminUsersPage from './pages/AdminUsersPage';
@@ -26,12 +25,22 @@ const queryClient = new QueryClient();
 function RootComponent() {
   const { identity, isInitializing } = useInternetIdentity();
   const { data: userProfile, isLoading: profileLoading, isFetched, refetch } = useGetCallerUserProfile();
+  const saveProfileMutation = useSaveCallerUserProfile();
 
   const isAuthenticated = !!identity;
   const showProfileSetup = isAuthenticated && !profileLoading && isFetched && userProfile === null;
 
-  const handleProfileSetupComplete = () => {
-    refetch();
+  const handleProfileSetupComplete = async (name: string, phoneNumber: string): Promise<void> => {
+    const profile: UserProfile = {
+      name,
+      phoneNumber,
+      balance: BigInt(0),
+      referrer: undefined,
+      level: BigInt(1),
+      active: false,
+    };
+    await saveProfileMutation.mutateAsync(profile);
+    await refetch();
   };
 
   if (isInitializing) {
@@ -54,7 +63,7 @@ function RootComponent() {
 
 function IndexComponent() {
   const { identity } = useInternetIdentity();
-  
+
   React.useEffect(() => {
     if (identity) {
       window.location.href = '/dashboard';
@@ -62,7 +71,7 @@ function IndexComponent() {
       window.location.href = '/login';
     }
   }, [identity]);
-  
+
   return null;
 }
 
@@ -84,7 +93,7 @@ const loginRoute = createRoute({
 
 const registrationRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/registration',
+  path: '/register',
   component: RegistrationPage,
 });
 
@@ -102,7 +111,7 @@ const depositRoute = createRoute({
 
 const withdrawalRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/withdrawal',
+  path: '/withdraw',
   component: WithdrawalPage,
 });
 
@@ -112,21 +121,9 @@ const levelsRoute = createRoute({
   component: LevelsPage,
 });
 
-const loanReferralsRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/loan-referrals',
-  component: LoanReferralsPage,
-});
-
-const memberReferralsRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/member-referrals',
-  component: MemberReferralsPage,
-});
-
 const transactionHistoryRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/transaction-history',
+  path: '/transactions',
   component: TransactionHistoryPage,
 });
 
@@ -162,8 +159,6 @@ const routeTree = rootRoute.addChildren([
   depositRoute,
   withdrawalRoute,
   levelsRoute,
-  loanReferralsRoute,
-  memberReferralsRoute,
   transactionHistoryRoute,
   adminDashboardRoute,
   adminUsersRoute,

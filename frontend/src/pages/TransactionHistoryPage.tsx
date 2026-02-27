@@ -1,81 +1,83 @@
 import React from 'react';
 import { useGetCallerWithdrawalRequests } from '../hooks/useQueries';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import StatusBadge from '../components/common/StatusBadge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { History, ArrowUpRight } from 'lucide-react';
 import AmountDisplay from '../components/common/AmountDisplay';
-import { format } from 'date-fns';
+import StatusBadge from '../components/common/StatusBadge';
 
 export default function TransactionHistoryPage() {
-  const { data: withdrawalRequests, isLoading } = useGetCallerWithdrawalRequests();
-
-  const sortedRequests = withdrawalRequests
-    ? [...withdrawalRequests].sort((a, b) => Number(b.timestamp - a.timestamp))
-    : [];
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading transactions...</p>
-        </div>
-      </div>
-    );
-  }
+  const { data: requests, isLoading } = useGetCallerWithdrawalRequests();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-2xl p-8 text-white shadow-xl">
-        <h1 className="text-3xl font-bold mb-2 font-display">Transaction History</h1>
-        <p className="text-purple-100">View all your withdrawal requests and their status</p>
+      <div className="bg-gradient-to-r from-red-700 to-red-600 rounded-2xl p-6 text-white shadow-red-lg">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+            <History className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-heading font-bold">Transaction History</h1>
+            <p className="text-red-200 text-sm">View all your withdrawal requests</p>
+          </div>
+        </div>
       </div>
 
-      {/* Transactions Table */}
-      <Card className="border-purple-200 shadow-card">
+      <Card className="border-red-100 shadow-red-sm">
         <CardHeader>
-          <CardTitle className="font-display">Withdrawal Requests</CardTitle>
+          <CardTitle className="font-heading flex items-center gap-2">
+            <ArrowUpRight className="w-5 h-5 text-red-600" />
+            Withdrawal Requests
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          {sortedRequests.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">No withdrawal requests found</p>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600"></div>
+            </div>
+          ) : !requests || requests.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <History className="w-8 h-8 mx-auto mb-2 opacity-40" />
+              <p>No withdrawal requests yet</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-purple-50 dark:bg-purple-900/20">
-                    <TableHead className="font-semibold">Date</TableHead>
-                    <TableHead className="font-semibold">Amount</TableHead>
-                    <TableHead className="font-semibold">Bank Account</TableHead>
-                    <TableHead className="font-semibold">IFSC Code</TableHead>
-                    <TableHead className="font-semibold">Status</TableHead>
+                  <TableRow className="bg-red-50">
+                    <TableHead className="text-red-700">ID</TableHead>
+                    <TableHead className="text-red-700">Amount</TableHead>
+                    <TableHead className="text-red-700">Bank Details</TableHead>
+                    <TableHead className="text-red-700">Date</TableHead>
+                    <TableHead className="text-red-700">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sortedRequests.map((request) => {
-                    const bankDetailsMatch = request.bankDetails.match(/Account: (\d+), IFSC: ([A-Z0-9]+)/);
-                    const bankAccount = bankDetailsMatch ? bankDetailsMatch[1] : 'N/A';
-                    const ifscCode = bankDetailsMatch ? bankDetailsMatch[2] : 'N/A';
-                    const maskedAccount =
-                      bankAccount !== 'N/A' ? `****${bankAccount.slice(-4)}` : bankAccount;
-
-                    return (
-                      <TableRow key={Number(request.id)} className="hover:bg-purple-50/50 dark:hover:bg-purple-900/10">
-                        <TableCell>{format(new Date(Number(request.timestamp) / 1000000), 'MMM dd, yyyy')}</TableCell>
-                        <TableCell>
-                          <AmountDisplay amount={request.amount} />
-                        </TableCell>
-                        <TableCell className="font-mono text-sm">{maskedAccount}</TableCell>
-                        <TableCell className="font-mono text-sm">{ifscCode}</TableCell>
-                        <TableCell>
-                          <StatusBadge status={request.status} />
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                  {requests.map((req) => (
+                    <TableRow key={req.id.toString()} className="hover:bg-red-50/50">
+                      <TableCell className="font-medium text-red-700">#{req.id.toString()}</TableCell>
+                      <TableCell>
+                        <AmountDisplay amount={Number(req.amount)} size="sm" />
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-sm max-w-32 truncate">
+                        {req.bankDetails}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {new Date(Number(req.timestamp) / 1_000_000).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge status={req.status} />
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </div>

@@ -11,6 +11,16 @@ import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
 export interface LoanReferral { 'member' : Principal, 'amount' : bigint }
+export interface LoanReferralRecord {
+  'id' : bigint,
+  'referrer' : Principal,
+  'loanAmount' : bigint,
+  'commission' : bigint,
+  'notes' : string,
+  'timestamp' : Time,
+  'phoneNumber' : string,
+  'borrowerName' : string,
+}
 export interface MemberReferral {
   'referrer' : Principal,
   'newMember' : Principal,
@@ -38,7 +48,33 @@ export interface WithdrawalRequest {
 export type WithdrawalStatus = { 'pending' : null } |
   { 'approved' : null } |
   { 'rejected' : string };
+export interface _CaffeineStorageCreateCertificateResult {
+  'method' : string,
+  'blob_hash' : string,
+}
+export interface _CaffeineStorageRefillInformation {
+  'proposed_top_up_amount' : [] | [bigint],
+}
+export interface _CaffeineStorageRefillResult {
+  'success' : [] | [boolean],
+  'topped_up_amount' : [] | [bigint],
+}
 export interface _SERVICE {
+  '_caffeineStorageBlobIsLive' : ActorMethod<[Uint8Array], boolean>,
+  '_caffeineStorageBlobsToDelete' : ActorMethod<[], Array<Uint8Array>>,
+  '_caffeineStorageConfirmBlobDeletion' : ActorMethod<
+    [Array<Uint8Array>],
+    undefined
+  >,
+  '_caffeineStorageCreateCertificate' : ActorMethod<
+    [string],
+    _CaffeineStorageCreateCertificateResult
+  >,
+  '_caffeineStorageRefillCashier' : ActorMethod<
+    [[] | [_CaffeineStorageRefillInformation]],
+    _CaffeineStorageRefillResult
+  >,
+  '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'addLoanReferral' : ActorMethod<[Principal, bigint], undefined>,
   'addMemberReferral' : ActorMethod<[Principal, Principal], undefined>,
@@ -47,6 +83,8 @@ export interface _SERVICE {
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createWithdrawalRequest' : ActorMethod<[bigint, string], bigint>,
   'deposit' : ActorMethod<[bigint], undefined>,
+  'generateOTPForPhone' : ActorMethod<[string], string>,
+  'getAllLoanReferralRecords' : ActorMethod<[], Array<LoanReferralRecord>>,
   'getAllLoanReferrals' : ActorMethod<[], Array<LoanReferral>>,
   'getAllMemberReferrals' : ActorMethod<[], Array<MemberReferral>>,
   'getAllWithdrawalRequests' : ActorMethod<[], Array<WithdrawalRequest>>,
@@ -54,17 +92,30 @@ export interface _SERVICE {
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getCallerWithdrawalRequests' : ActorMethod<[], Array<WithdrawalRequest>>,
   'getLoanReferral' : ActorMethod<[Principal], [] | [LoanReferral]>,
+  'getLoanReferralRecord' : ActorMethod<[bigint], [] | [LoanReferralRecord]>,
   'getMemberReferral' : ActorMethod<[Principal], [] | [MemberReferral]>,
   'getPendingWithdrawalRequests' : ActorMethod<[], Array<WithdrawalRequest>>,
+  'getTotalEarnings' : ActorMethod<[], bigint>,
+  'getTotalLevelIncome' : ActorMethod<[], bigint>,
+  'getTotalLoanReferralCommission' : ActorMethod<[], bigint>,
+  'getTotalTeamSize' : ActorMethod<[], bigint>,
+  'getUserLoanReferralRecords' : ActorMethod<
+    [Principal],
+    Array<LoanReferralRecord>
+  >,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'getUserProfileByPhoneNumber' : ActorMethod<[string], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'markLevelRewarded' : ActorMethod<[Principal, bigint], boolean>,
   'registerUser' : ActorMethod<
     [string, string, [] | [Principal], bigint],
     undefined
   >,
   'rejectWithdrawalRequest' : ActorMethod<[bigint, string], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
-  'updateLevel' : ActorMethod<[bigint], undefined>,
+  'submitLoanReferral' : ActorMethod<[string, string, bigint, string], bigint>,
+  'updateLevel' : ActorMethod<[Principal, bigint], undefined>,
+  'verifyPhoneAndLogin' : ActorMethod<[string, string], [] | [Principal]>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

@@ -8,10 +8,32 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const _CaffeineStorageCreateCertificateResult = IDL.Record({
+  'method' : IDL.Text,
+  'blob_hash' : IDL.Text,
+});
+export const _CaffeineStorageRefillInformation = IDL.Record({
+  'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const _CaffeineStorageRefillResult = IDL.Record({
+  'success' : IDL.Opt(IDL.Bool),
+  'topped_up_amount' : IDL.Opt(IDL.Nat),
+});
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
   'guest' : IDL.Null,
+});
+export const Time = IDL.Int;
+export const LoanReferralRecord = IDL.Record({
+  'id' : IDL.Nat,
+  'referrer' : IDL.Principal,
+  'loanAmount' : IDL.Nat,
+  'commission' : IDL.Nat,
+  'notes' : IDL.Text,
+  'timestamp' : Time,
+  'phoneNumber' : IDL.Text,
+  'borrowerName' : IDL.Text,
 });
 export const LoanReferral = IDL.Record({
   'member' : IDL.Principal,
@@ -26,7 +48,6 @@ export const WithdrawalStatus = IDL.Variant({
   'approved' : IDL.Null,
   'rejected' : IDL.Text,
 });
-export const Time = IDL.Int;
 export const WithdrawalRequest = IDL.Record({
   'id' : IDL.Nat,
   'status' : WithdrawalStatus,
@@ -45,6 +66,32 @@ export const UserProfile = IDL.Record({
 });
 
 export const idlService = IDL.Service({
+  '_caffeineStorageBlobIsLive' : IDL.Func(
+      [IDL.Vec(IDL.Nat8)],
+      [IDL.Bool],
+      ['query'],
+    ),
+  '_caffeineStorageBlobsToDelete' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      ['query'],
+    ),
+  '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      [],
+      [],
+    ),
+  '_caffeineStorageCreateCertificate' : IDL.Func(
+      [IDL.Text],
+      [_CaffeineStorageCreateCertificateResult],
+      [],
+    ),
+  '_caffeineStorageRefillCashier' : IDL.Func(
+      [IDL.Opt(_CaffeineStorageRefillInformation)],
+      [_CaffeineStorageRefillResult],
+      [],
+    ),
+  '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'addLoanReferral' : IDL.Func([IDL.Principal, IDL.Nat], [], []),
   'addMemberReferral' : IDL.Func([IDL.Principal, IDL.Principal], [], []),
@@ -53,6 +100,12 @@ export const idlService = IDL.Service({
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createWithdrawalRequest' : IDL.Func([IDL.Nat, IDL.Text], [IDL.Nat], []),
   'deposit' : IDL.Func([IDL.Nat], [], []),
+  'generateOTPForPhone' : IDL.Func([IDL.Text], [IDL.Text], []),
+  'getAllLoanReferralRecords' : IDL.Func(
+      [],
+      [IDL.Vec(LoanReferralRecord)],
+      ['query'],
+    ),
   'getAllLoanReferrals' : IDL.Func([], [IDL.Vec(LoanReferral)], ['query']),
   'getAllMemberReferrals' : IDL.Func([], [IDL.Vec(MemberReferral)], ['query']),
   'getAllWithdrawalRequests' : IDL.Func(
@@ -72,6 +125,11 @@ export const idlService = IDL.Service({
       [IDL.Opt(LoanReferral)],
       ['query'],
     ),
+  'getLoanReferralRecord' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Opt(LoanReferralRecord)],
+      ['query'],
+    ),
   'getMemberReferral' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(MemberReferral)],
@@ -82,12 +140,27 @@ export const idlService = IDL.Service({
       [IDL.Vec(WithdrawalRequest)],
       ['query'],
     ),
+  'getTotalEarnings' : IDL.Func([], [IDL.Nat], ['query']),
+  'getTotalLevelIncome' : IDL.Func([], [IDL.Nat], ['query']),
+  'getTotalLoanReferralCommission' : IDL.Func([], [IDL.Nat], ['query']),
+  'getTotalTeamSize' : IDL.Func([], [IDL.Nat], ['query']),
+  'getUserLoanReferralRecords' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Vec(LoanReferralRecord)],
+      ['query'],
+    ),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
+  'getUserProfileByPhoneNumber' : IDL.Func(
+      [IDL.Text],
+      [IDL.Opt(UserProfile)],
+      ['query'],
+    ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'markLevelRewarded' : IDL.Func([IDL.Principal, IDL.Nat], [IDL.Bool], []),
   'registerUser' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Opt(IDL.Principal), IDL.Nat],
       [],
@@ -95,16 +168,48 @@ export const idlService = IDL.Service({
     ),
   'rejectWithdrawalRequest' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-  'updateLevel' : IDL.Func([IDL.Nat], [], []),
+  'submitLoanReferral' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Nat, IDL.Text],
+      [IDL.Nat],
+      [],
+    ),
+  'updateLevel' : IDL.Func([IDL.Principal, IDL.Nat], [], []),
+  'verifyPhoneAndLogin' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Opt(IDL.Principal)],
+      [],
+    ),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const _CaffeineStorageCreateCertificateResult = IDL.Record({
+    'method' : IDL.Text,
+    'blob_hash' : IDL.Text,
+  });
+  const _CaffeineStorageRefillInformation = IDL.Record({
+    'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const _CaffeineStorageRefillResult = IDL.Record({
+    'success' : IDL.Opt(IDL.Bool),
+    'topped_up_amount' : IDL.Opt(IDL.Nat),
+  });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
+  });
+  const Time = IDL.Int;
+  const LoanReferralRecord = IDL.Record({
+    'id' : IDL.Nat,
+    'referrer' : IDL.Principal,
+    'loanAmount' : IDL.Nat,
+    'commission' : IDL.Nat,
+    'notes' : IDL.Text,
+    'timestamp' : Time,
+    'phoneNumber' : IDL.Text,
+    'borrowerName' : IDL.Text,
   });
   const LoanReferral = IDL.Record({
     'member' : IDL.Principal,
@@ -119,7 +224,6 @@ export const idlFactory = ({ IDL }) => {
     'approved' : IDL.Null,
     'rejected' : IDL.Text,
   });
-  const Time = IDL.Int;
   const WithdrawalRequest = IDL.Record({
     'id' : IDL.Nat,
     'status' : WithdrawalStatus,
@@ -138,6 +242,32 @@ export const idlFactory = ({ IDL }) => {
   });
   
   return IDL.Service({
+    '_caffeineStorageBlobIsLive' : IDL.Func(
+        [IDL.Vec(IDL.Nat8)],
+        [IDL.Bool],
+        ['query'],
+      ),
+    '_caffeineStorageBlobsToDelete' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        ['query'],
+      ),
+    '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        [],
+        [],
+      ),
+    '_caffeineStorageCreateCertificate' : IDL.Func(
+        [IDL.Text],
+        [_CaffeineStorageCreateCertificateResult],
+        [],
+      ),
+    '_caffeineStorageRefillCashier' : IDL.Func(
+        [IDL.Opt(_CaffeineStorageRefillInformation)],
+        [_CaffeineStorageRefillResult],
+        [],
+      ),
+    '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'addLoanReferral' : IDL.Func([IDL.Principal, IDL.Nat], [], []),
     'addMemberReferral' : IDL.Func([IDL.Principal, IDL.Principal], [], []),
@@ -146,6 +276,12 @@ export const idlFactory = ({ IDL }) => {
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createWithdrawalRequest' : IDL.Func([IDL.Nat, IDL.Text], [IDL.Nat], []),
     'deposit' : IDL.Func([IDL.Nat], [], []),
+    'generateOTPForPhone' : IDL.Func([IDL.Text], [IDL.Text], []),
+    'getAllLoanReferralRecords' : IDL.Func(
+        [],
+        [IDL.Vec(LoanReferralRecord)],
+        ['query'],
+      ),
     'getAllLoanReferrals' : IDL.Func([], [IDL.Vec(LoanReferral)], ['query']),
     'getAllMemberReferrals' : IDL.Func(
         [],
@@ -169,6 +305,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(LoanReferral)],
         ['query'],
       ),
+    'getLoanReferralRecord' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(LoanReferralRecord)],
+        ['query'],
+      ),
     'getMemberReferral' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(MemberReferral)],
@@ -179,12 +320,27 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(WithdrawalRequest)],
         ['query'],
       ),
+    'getTotalEarnings' : IDL.Func([], [IDL.Nat], ['query']),
+    'getTotalLevelIncome' : IDL.Func([], [IDL.Nat], ['query']),
+    'getTotalLoanReferralCommission' : IDL.Func([], [IDL.Nat], ['query']),
+    'getTotalTeamSize' : IDL.Func([], [IDL.Nat], ['query']),
+    'getUserLoanReferralRecords' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(LoanReferralRecord)],
+        ['query'],
+      ),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
+    'getUserProfileByPhoneNumber' : IDL.Func(
+        [IDL.Text],
+        [IDL.Opt(UserProfile)],
+        ['query'],
+      ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'markLevelRewarded' : IDL.Func([IDL.Principal, IDL.Nat], [IDL.Bool], []),
     'registerUser' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Opt(IDL.Principal), IDL.Nat],
         [],
@@ -192,7 +348,17 @@ export const idlFactory = ({ IDL }) => {
       ),
     'rejectWithdrawalRequest' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-    'updateLevel' : IDL.Func([IDL.Nat], [], []),
+    'submitLoanReferral' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Nat, IDL.Text],
+        [IDL.Nat],
+        [],
+      ),
+    'updateLevel' : IDL.Func([IDL.Principal, IDL.Nat], [], []),
+    'verifyPhoneAndLogin' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Opt(IDL.Principal)],
+        [],
+      ),
   });
 };
 

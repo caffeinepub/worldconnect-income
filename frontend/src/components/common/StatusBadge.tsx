@@ -1,47 +1,45 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import type { WithdrawalStatus } from '../../backend';
+import { WithdrawalStatus } from '../../backend';
 
 interface StatusBadgeProps {
   status: WithdrawalStatus;
 }
 
 export default function StatusBadge({ status }: StatusBadgeProps) {
-  const getStatusDisplay = () => {
-    if ('pending' in status) {
-      return { label: 'Pending', variant: 'default' as const, color: 'bg-purple-100 text-purple-700 border-purple-300' };
-    }
-    if ('approved' in status) {
-      return { label: 'Approved', variant: 'default' as const, color: 'bg-green-100 text-green-700 border-green-300' };
-    }
-    if ('rejected' in status) {
-      return { label: 'Rejected', variant: 'destructive' as const, color: 'bg-red-100 text-red-700 border-red-300' };
-    }
-    return { label: 'Unknown', variant: 'default' as const, color: 'bg-gray-100 text-gray-700 border-gray-300' };
-  };
+  if (status.__kind__ === 'pending') {
+    return (
+      <Badge className="bg-yellow-100 text-yellow-800 border border-yellow-300 hover:bg-yellow-100">
+        Pending
+      </Badge>
+    );
+  }
 
-  const { label, variant, color } = getStatusDisplay();
-  const rejectionReason = 'rejected' in status ? status.rejected : null;
+  if (status.__kind__ === 'approved') {
+    return (
+      <Badge className="bg-green-100 text-green-800 border border-green-300 hover:bg-green-100">
+        Approved
+      </Badge>
+    );
+  }
 
-  const badge = (
-    <Badge variant={variant} className={color}>
-      {label}
-    </Badge>
-  );
-
-  if (rejectionReason) {
+  if (status.__kind__ === 'rejected') {
     return (
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger asChild>{badge}</TooltipTrigger>
+          <TooltipTrigger asChild>
+            <Badge className="bg-red-100 text-red-800 border border-red-300 hover:bg-red-100 cursor-help">
+              Rejected
+            </Badge>
+          </TooltipTrigger>
           <TooltipContent>
-            <p className="text-sm">Reason: {rejectionReason}</p>
+            <p className="text-xs max-w-48">{status.rejected}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
     );
   }
 
-  return badge;
+  return null;
 }

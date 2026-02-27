@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-withdrawal-form-in-frontend-src-pages-withdrawalpage-tsx-to-display-the-maximum-allowed-withdrawal-amount-1-of-balance-and-add-client-side-validation-to-prevent-users-from-submitting-amounts-exceeding-this-limit",
-      "featureTitle": "Update the withdrawal form in frontend/src/pages/WithdrawalPage.tsx to display the maximum allowed withdrawal amount (1% of balance) and add client-side validation to prevent users from submitting amounts exceeding this limit",
+      "featureId": "feature-extend-the-loginpage-frontend-src-pages-loginpage-tsx-to-support-mobile-number-login-with-otp-verification-for-regular-members-not-just-admin-add-a-member-login-tab-or-section-alongside-the-existing-admin-phone-login-allowing-any-user-to-enter-their-registered-mobile-number-receive-enter-a-simulated-otp-and-authenticate-on-successful-otp-verification-look-up-the-user-by-phone-number-in-the-backend-and-establish-their-session-if-no-user-is-found-with-that-phone-number-show-an-appropriate-error-message-directing-them-to-register-first",
+      "featureTitle": "Extend the LoginPage (frontend/src/pages/LoginPage.tsx) to support mobile number login with OTP verification for regular members (not just admin). Add a 'Member Login' tab or section alongside the existing admin phone login, allowing any user to enter their registered mobile number, receive/enter a simulated OTP, and authenticate. On successful OTP verification, look up the user by phone number in the backend and establish their session. If no user is found with that phone number, show an appropriate error message directing them to register first.",
       "files": [
-        "frontend/src/pages/WithdrawalPage.tsx"
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/LoginPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -13,10 +14,11 @@
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-22"
+        "REQ-46"
       ],
       "confidence": "high"
     }

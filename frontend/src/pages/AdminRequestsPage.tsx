@@ -1,168 +1,154 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import React, { useState } from 'react';
 import {
-  useIsCallerAdmin,
-  useGetPendingWithdrawalRequests,
+  useGetAllWithdrawalRequests,
   useApproveWithdrawalRequest,
   useRejectWithdrawalRequest,
-  useGetAllMemberReferrals,
 } from '../hooks/useQueries';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { ClipboardList, CheckCircle, XCircle } from 'lucide-react';
 import AmountDisplay from '../components/common/AmountDisplay';
-import { toast } from 'sonner';
-import { format } from 'date-fns';
-import { CheckCircle, XCircle } from 'lucide-react';
-import type { UserProfile } from '../backend';
+import StatusBadge from '../components/common/StatusBadge';
 
 export default function AdminRequestsPage() {
-  const { data: isAdmin, isLoading: adminLoading } = useIsCallerAdmin();
-  const { data: pendingRequests, isLoading: requestsLoading } = useGetPendingWithdrawalRequests();
-  const { data: allReferrals } = useGetAllMemberReferrals();
+  const { data: requests, isLoading } = useGetAllWithdrawalRequests();
   const approveMutation = useApproveWithdrawalRequest();
   const rejectMutation = useRejectWithdrawalRequest();
-  const navigate = useNavigate();
 
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState<bigint | null>(null);
-  const [rejectionReason, setRejectionReason] = useState('');
+  const [rejectReason, setRejectReason] = useState('');
 
-  useEffect(() => {
-    if (!adminLoading && !isAdmin) {
-      navigate({ to: '/dashboard' });
-    }
-  }, [isAdmin, adminLoading, navigate]);
-
-  const handleApprove = async (requestId: bigint) => {
+  const handleApprove = async (id: bigint) => {
     try {
-      await approveMutation.mutateAsync(requestId);
-      toast.success('Withdrawal request approved successfully');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to approve request');
+      await approveMutation.mutateAsync(id);
+    } catch (err: any) {
+      console.error('Approve error:', err);
     }
   };
 
-  const handleRejectClick = (requestId: bigint) => {
-    setSelectedRequestId(requestId);
+  const handleRejectOpen = (id: bigint) => {
+    setSelectedRequestId(id);
+    setRejectReason('');
     setRejectDialogOpen(true);
   };
 
   const handleRejectConfirm = async () => {
     if (!selectedRequestId) return;
-
-    if (!rejectionReason.trim()) {
-      toast.error('Please provide a reason for rejection');
-      return;
-    }
-
     try {
-      await rejectMutation.mutateAsync({ requestId: selectedRequestId, reason: rejectionReason });
-      toast.success('Withdrawal request rejected');
+      await rejectMutation.mutateAsync({ requestId: selectedRequestId, reason: rejectReason });
       setRejectDialogOpen(false);
-      setRejectionReason('');
-      setSelectedRequestId(null);
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to reject request');
+    } catch (err: any) {
+      console.error('Reject error:', err);
     }
   };
-
-  const getUserName = (userPrincipal: string): string => {
-    const referral = allReferrals?.find((ref) => ref.newMember.toString() === userPrincipal);
-    return referral ? `User ${userPrincipal.slice(0, 8)}...` : `User ${userPrincipal.slice(0, 8)}...`;
-  };
-
-  if (adminLoading || requestsLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading requests...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAdmin) {
-    return null;
-  }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-2xl p-8 text-white shadow-xl">
-        <h1 className="text-3xl font-bold mb-2 font-display">Withdrawal Requests</h1>
-        <p className="text-purple-100">Review and manage pending withdrawal requests</p>
+      <div className="bg-gradient-to-r from-red-700 to-red-600 rounded-2xl p-6 text-white shadow-red-lg">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+            <ClipboardList className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-heading font-bold">Withdrawal Requests</h1>
+            <p className="text-red-200 text-sm">Manage and process withdrawal requests</p>
+          </div>
+        </div>
       </div>
 
-      {/* Requests Table */}
-      <Card className="border-purple-200 shadow-card">
+      <Card className="border-red-100 shadow-red-sm">
         <CardHeader>
-          <CardTitle className="font-display">Pending Requests</CardTitle>
+          <CardTitle className="font-heading">All Requests</CardTitle>
         </CardHeader>
         <CardContent>
-          {!pendingRequests || pendingRequests.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">No pending withdrawal requests</p>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600"></div>
+            </div>
+          ) : !requests || requests.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <ClipboardList className="w-8 h-8 mx-auto mb-2 opacity-40" />
+              <p>No withdrawal requests</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-purple-50 dark:bg-purple-900/20">
-                    <TableHead className="font-semibold">Date</TableHead>
-                    <TableHead className="font-semibold">User</TableHead>
-                    <TableHead className="font-semibold">Amount</TableHead>
-                    <TableHead className="font-semibold">Bank Account</TableHead>
-                    <TableHead className="font-semibold">IFSC Code</TableHead>
-                    <TableHead className="font-semibold">Actions</TableHead>
+                  <TableRow className="bg-red-50">
+                    <TableHead className="text-red-700">ID</TableHead>
+                    <TableHead className="text-red-700">User</TableHead>
+                    <TableHead className="text-red-700">Amount</TableHead>
+                    <TableHead className="text-red-700">Bank Details</TableHead>
+                    <TableHead className="text-red-700">Date</TableHead>
+                    <TableHead className="text-red-700">Status</TableHead>
+                    <TableHead className="text-red-700">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {pendingRequests.map((request) => {
-                    const bankDetailsMatch = request.bankDetails.match(/Account: (\d+), IFSC: ([A-Z0-9]+)/);
-                    const bankAccount = bankDetailsMatch ? bankDetailsMatch[1] : 'N/A';
-                    const ifscCode = bankDetailsMatch ? bankDetailsMatch[2] : 'N/A';
-                    const maskedAccount =
-                      bankAccount !== 'N/A' ? `****${bankAccount.slice(-4)}` : bankAccount;
-
-                    return (
-                      <TableRow key={Number(request.id)} className="hover:bg-purple-50/50 dark:hover:bg-purple-900/10">
-                        <TableCell>{format(new Date(Number(request.timestamp) / 1000000), 'MMM dd, yyyy')}</TableCell>
-                        <TableCell className="font-medium">{getUserName(request.user.toString())}</TableCell>
-                        <TableCell>
-                          <AmountDisplay amount={request.amount} />
-                        </TableCell>
-                        <TableCell className="font-mono text-sm">{maskedAccount}</TableCell>
-                        <TableCell className="font-mono text-sm">{ifscCode}</TableCell>
-                        <TableCell>
+                  {requests.map((req) => (
+                    <TableRow key={req.id.toString()} className="hover:bg-red-50/50">
+                      <TableCell className="font-medium text-red-700">#{req.id.toString()}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground max-w-24 truncate">
+                        {req.user.toString()}
+                      </TableCell>
+                      <TableCell>
+                        <AmountDisplay amount={Number(req.amount)} size="sm" />
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground max-w-32 truncate">
+                        {req.bankDetails}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(Number(req.timestamp) / 1_000_000).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge status={req.status} />
+                      </TableCell>
+                      <TableCell>
+                        {req.status.__kind__ === 'pending' && (
                           <div className="flex gap-2">
                             <Button
                               size="sm"
-                              onClick={() => handleApprove(request.id)}
+                              onClick={() => handleApprove(req.id)}
                               disabled={approveMutation.isPending}
-                              className="bg-green-600 hover:bg-green-700 text-white"
+                              className="bg-green-600 hover:bg-green-700 text-white h-7 px-2 text-xs"
                             >
-                              <CheckCircle className="h-4 w-4 mr-1" />
+                              <CheckCircle className="w-3 h-3 mr-1" />
                               Approve
                             </Button>
                             <Button
                               size="sm"
-                              variant="destructive"
-                              onClick={() => handleRejectClick(request.id)}
-                              disabled={rejectMutation.isPending}
+                              variant="outline"
+                              onClick={() => handleRejectOpen(req.id)}
+                              className="border-red-300 text-red-600 hover:bg-red-50 h-7 px-2 text-xs"
                             >
-                              <XCircle className="h-4 w-4 mr-1" />
+                              <XCircle className="w-3 h-3 mr-1" />
                               Reject
                             </Button>
                           </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </div>
@@ -170,31 +156,42 @@ export default function AdminRequestsPage() {
         </CardContent>
       </Card>
 
-      {/* Rejection Dialog */}
+      {/* Reject Dialog */}
       <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reject Withdrawal Request</DialogTitle>
+            <DialogTitle className="font-heading">Reject Withdrawal Request</DialogTitle>
+            <DialogDescription>
+              Please provide a reason for rejecting this withdrawal request.
+            </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="reason">Reason for Rejection</Label>
-              <Textarea
-                id="reason"
-                placeholder="Enter reason for rejecting this withdrawal request..."
-                value={rejectionReason}
-                onChange={(e) => setRejectionReason(e.target.value)}
-                rows={4}
-                className="border-purple-200 focus:border-primary focus:ring-primary"
-              />
-            </div>
+          <div className="space-y-3 py-2">
+            <Label htmlFor="rejectReason">Rejection Reason</Label>
+            <Input
+              id="rejectReason"
+              placeholder="Enter reason for rejection"
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              className="focus:ring-red-500 focus:border-red-500"
+            />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setRejectDialogOpen(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleRejectConfirm} disabled={rejectMutation.isPending}>
-              {rejectMutation.isPending ? 'Rejecting...' : 'Confirm Rejection'}
+            <Button
+              onClick={handleRejectConfirm}
+              disabled={rejectMutation.isPending || !rejectReason.trim()}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {rejectMutation.isPending ? (
+                <span className="flex items-center gap-2">
+                  <span className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></span>
+                  Rejecting...
+                </span>
+              ) : (
+                'Confirm Rejection'
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

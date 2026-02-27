@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 15,
+  "projectStateVersion": 35,
   "summary": "WorldConnect Income - Admin panel and mobile app with authentication, financial transactions, referral income tracking, and multi-level membership system",
   "architectural_notes": [
     "Mobile app with admin panel (contact: 9422018674)",
@@ -8,7 +8,8 @@
     "₹100 special plan mentioned",
     "Phone-based authentication required",
     "New 10-level income structure with member counts: 10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120",
-    "Withdrawal limit: 1% (interpretation needed - 1% of balance, deposit amount, or total earnings)"
+    "Withdrawal limit: 1% (interpretation needed - 1% of balance, deposit amount, or total earnings)",
+    "Support and customer care WhatsApp number: 9422018674"
   ],
   "known_issues": [],
   "isFixRequest": false,
@@ -164,6 +165,166 @@
         "REQ-22"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-add-a-support-customer-care-section-in-the-footer-of-mainlayout-frontend-src-components-layout-mainlayout-tsx-displaying-support-customer-care-label-with-whatsapp-contact-number-9422018674-styled-consistently-with-the-existing-purple-theme-and-footer-social-links",
+      "title": "Add a support/customer care section in the footer of MainLayout (frontend/src/components/layout/MainLayout.tsx) displaying 'Support & Customer Care' label with WhatsApp contact number 9422018674, styled consistently with the existing purple theme and footer social links",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-same-support-contact-information-to-the-admin-layout-footer-in-adminlayout-frontend-src-components-layout-adminlayout-tsx-for-consistency-across-admin-and-user-interfaces",
+      "title": "Add the same support contact information to the admin layout footer in AdminLayout (frontend/src/components/layout/AdminLayout.tsx) for consistency across admin and user interfaces",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-loan-referral-submission-form-in-frontend-src-pages-loanreferralspage-tsx-allowing-users-to-enter-and-submit-loan-referral-details-borrower-name-phone-number-loan-amount-and-any-notes-on-submission-call-a-backend-function-to-store-the-loan-referral-record-linked-to-the-referring-user-s-principal",
+      "title": "Add a loan referral submission form in frontend/src/pages/LoanReferralsPage.tsx allowing users to enter and submit loan referral details (borrower name, phone number, loan amount, and any notes). On submission, call a backend function to store the loan referral record linked to the referring user's principal.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-the-loan-referral-commission-earned-by-the-current-user-in-frontend-src-pages-loanreferralspage-tsx-add-a-summary-card-showing-total-loan-referral-commission-earned-the-backend-must-store-and-return-the-commission-amount-associated-with-each-loan-referral-record-and-expose-a-query-to-return-the-total-commission-for-the-calling-user",
+      "title": "Display the loan referral commission earned by the current user in frontend/src/pages/LoanReferralsPage.tsx. Add a summary card showing total loan referral commission earned. The backend must store and return the commission amount associated with each loan referral record and expose a query to return the total commission for the calling user.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-the-total-team-size-total-number-of-downline-members-across-all-levels-for-the-current-user-on-the-dashboardpage-frontend-src-pages-dashboardpage-tsx-as-a-dedicated-summary-card-the-backend-must-expose-a-query-that-returns-the-total-team-count-for-the-calling-user-by-traversing-the-referral-tree",
+      "title": "Display the total team size (total number of downline members across all levels) for the current user on the DashboardPage (frontend/src/pages/DashboardPage.tsx) as a dedicated summary card. The backend must expose a query that returns the total team count for the calling user by traversing the referral tree.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-a-total-earnings-summary-on-the-dashboardpage-frontend-src-pages-dashboardpage-tsx-as-a-dedicated-card-showing-the-sum-of-all-income-sources-level-income-member-referral-income-and-loan-referral-commission-the-backend-must-expose-a-query-that-returns-the-aggregated-total-earnings-for-the-calling-user",
+      "title": "Display a 'Total Earnings' summary on the DashboardPage (frontend/src/pages/DashboardPage.tsx) as a dedicated card showing the sum of all income sources: level income, member referral income, and loan referral commission. The backend must expose a query that returns the aggregated total earnings for the calling user.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-all-css-custom-properties-in-frontend-src-index-css-and-frontend-index-css-to-replace-the-current-purple-violet-primary-color-values-with-a-professional-red-color-palette-as-the-primary-brand-color-maintaining-the-existing-color-token-structure-light-and-dark-mode-variables",
+      "title": "Update all CSS custom properties in frontend/src/index.css and frontend/index.css to replace the current purple/violet primary color values with a professional red color palette as the primary brand color, maintaining the existing color token structure (light and dark mode variables).",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-frontend-tailwind-config-js-to-replace-all-purple-themed-color-palette-entries-with-equivalent-red-color-shades-e-g-red-50-through-red-950-ensuring-the-primary-brand-color-token-maps-to-red-across-all-tailwind-utility-classes",
+      "title": "Update frontend/tailwind.config.js to replace all purple-themed color palette entries with equivalent red color shades (e.g., red-50 through red-950), ensuring the primary brand color token maps to red across all Tailwind utility classes.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-all-component-and-page-files-to-replace-any-hardcoded-purple-violet-tailwind-class-names-e-g-bg-purple-text-purple-border-purple-ring-purple-with-their-red-equivalents-bg-red-text-red-border-red-ring-red-across-all-pages-and-components-dashboardpage-depositpage-withdrawalpage-levelspage-loanreferralspage-memberreferralspage-transactionhistorypage-registrationpage-loginpage-admindashboardpage-adminrequestspage-adminuserspage-adminsettingspage-mainlayout-adminlayout-levelprogresscard-levelstructuretable-referrallinkgenerator-statusbadge-depositinstructions-upipaymentqrcode-amountdisplay-and-profilesetupmodal",
+      "title": "Update all component and page files to replace any hardcoded purple/violet Tailwind class names (e.g., bg-purple-*, text-purple-*, border-purple-*, ring-purple-*) with their red equivalents (bg-red-*, text-red-*, border-red-*, ring-red-*) across all pages and components: DashboardPage, DepositPage, WithdrawalPage, LevelsPage, LoanReferralsPage, MemberReferralsPage, TransactionHistoryPage, RegistrationPage, LoginPage, AdminDashboardPage, AdminRequestsPage, AdminUsersPage, AdminSettingsPage, MainLayout, AdminLayout, LevelProgressCard, LevelStructureTable, ReferralLinkGenerator, StatusBadge, DepositInstructions, UPIPaymentQRCode, AmountDisplay, and ProfileSetupModal.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-commission-rate-display-in-frontend-src-pages-loanreferralspage-tsx-to-show-1-commission-on-referred-loan-amount-instead-of-the-current-5-description-so-the-ui-accurately-reflects-the-new-rate",
+      "title": "Update the commission rate display in frontend/src/pages/LoanReferralsPage.tsx to show '1% commission on referred loan amount' instead of the current 5% description, so the UI accurately reflects the new rate.",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-global-background-color-of-the-application-to-white-override-the-current-dark-colored-background-css-custom-properties-in-frontend-src-index-css-and-frontend-index-css-so-that-the-main-page-background-renders-as-white-ffffff-in-light-mode-ensuring-all-content-areas-cards-and-layout-containers-display-against-a-white-background",
+      "title": "Update the global background color of the application to white. Override the current dark/colored background CSS custom properties in frontend/src/index.css and frontend/index.css so that the main page background renders as white (#ffffff) in light mode, ensuring all content areas, cards, and layout containers display against a white background.",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-dedicated-loan-banking-services-section-page-or-prominent-section-on-the-dashboard-home-screen-that-showcases-five-financial-service-offerings-kyc-loan-private-salary-loan-business-loan-zero-balance-account-and-credit-card-each-service-must-be-displayed-as-a-visually-distinct-card-with-a-service-title-a-short-description-and-a-call-to-action-button-or-link-the-section-must-use-the-existing-red-brand-color-theme-and-render-on-a-white-background",
+      "title": "Create a new dedicated 'Loan & Banking Services' section (page or prominent section on the Dashboard/home screen) that showcases five financial service offerings: KYC Loan, Private Salary Loan, Business Loan, Zero Balance Account, and Credit Card. Each service must be displayed as a visually distinct card with a service title, a short description, and a call-to-action button or link. The section must use the existing red brand color theme and render on a white background.",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-level-income-summary-card-on-the-dashboardpage-frontend-src-pages-dashboardpage-tsx-that-fetches-and-displays-the-user-s-total-level-income-earned-using-the-new-backend-query-style-the-card-consistently-with-existing-summary-cards-using-the-red-brand-color-theme-on-a-white-background",
+      "title": "Add a 'Level Income' summary card on the DashboardPage (frontend/src/pages/DashboardPage.tsx) that fetches and displays the user's total level income earned using the new backend query. Style the card consistently with existing summary cards using the red brand color theme on a white background.",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-level-income-summary-card-on-the-levelspage-frontend-src-pages-levelspage-tsx-showing-the-total-level-income-earned-by-the-user-fetched-from-the-same-backend-query-place-it-prominently-above-or-alongside-the-level-progress-card",
+      "title": "Add a 'Level Income' summary card on the LevelsPage (frontend/src/pages/LevelsPage.tsx) showing the total level income earned by the user, fetched from the same backend query. Place it prominently above or alongside the level progress card.",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-memberreferralspage-frontend-src-pages-memberreferralspage-tsx-add-an-apply-now-button-or-link-prominently-in-the-referral-link-section-and-remove-only-the-descriptive-informational-text-content-such-as-how-the-referral-system-works-instructions-or-explanatory-paragraphs-the-referral-link-generator-component-referrallinkgenerator-and-the-apply-now-button-must-remain-visible",
+      "title": "In the MemberReferralsPage (frontend/src/pages/MemberReferralsPage.tsx), add an 'Apply Now' button or link prominently in the referral link section, and remove only the descriptive/informational text content (such as how-the-referral-system-works instructions or explanatory paragraphs). The referral link generator component (ReferralLinkGenerator) and the 'Apply Now' button must remain visible.",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-member-referrals-page-frontend-src-pages-memberreferralspage-tsx-from-the-application-entirely-delete-the-route-entry-in-app-tsx-remove-the-navigation-link-from-mainlayout-and-delete-or-stub-the-page-file-so-it-is-no-longer-accessible",
+      "title": "Remove the Member Referrals page (frontend/src/pages/MemberReferralsPage.tsx) from the application entirely: delete the route entry in App.tsx, remove the navigation link from MainLayout, and delete or stub the page file so it is no longer accessible.",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-loan-referrals-page-frontend-src-pages-loanreferralspage-tsx-from-the-application-entirely-delete-the-route-entry-in-app-tsx-remove-the-navigation-link-from-mainlayout-and-delete-or-stub-the-page-file-so-it-is-no-longer-accessible",
+      "title": "Remove the Loan Referrals page (frontend/src/pages/LoanReferralsPage.tsx) from the application entirely: delete the route entry in App.tsx, remove the navigation link from MainLayout, and delete or stub the page file so it is no longer accessible.",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-loan-banking-services-section-from-the-dashboardpage-frontend-src-pages-dashboardpage-tsx-by-removing-the-loanbankingservicessection-component-import-and-its-usage-in-the-page-jsx",
+      "title": "Remove the 'Loan & Banking Services' section from the DashboardPage (frontend/src/pages/DashboardPage.tsx) by removing the LoanBankingServicesSection component import and its usage in the page JSX.",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-dedicated-referral-link-section-inside-the-admin-panel-e-g-on-the-admindashboardpage-or-as-a-new-admin-sub-page-card-that-displays-the-referrallinkgenerator-component-allowing-the-admin-to-view-and-copy-referral-links-the-section-must-be-accessible-only-when-authenticated-as-admin",
+      "title": "Add a dedicated 'Referral Link' section inside the admin panel (e.g., on the AdminDashboardPage or as a new admin sub-page/card) that displays the ReferralLinkGenerator component, allowing the admin to view and copy referral links. The section must be accessible only when authenticated as admin.",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-the-loginpage-frontend-src-pages-loginpage-tsx-to-support-mobile-number-login-with-otp-verification-for-regular-members-not-just-admin-add-a-member-login-tab-or-section-alongside-the-existing-admin-phone-login-allowing-any-user-to-enter-their-registered-mobile-number-receive-enter-a-simulated-otp-and-authenticate-on-successful-otp-verification-look-up-the-user-by-phone-number-in-the-backend-and-establish-their-session-if-no-user-is-found-with-that-phone-number-show-an-appropriate-error-message-directing-them-to-register-first",
+      "title": "Extend the LoginPage (frontend/src/pages/LoginPage.tsx) to support mobile number login with OTP verification for regular members (not just admin). Add a 'Member Login' tab or section alongside the existing admin phone login, allowing any user to enter their registered mobile number, receive/enter a simulated OTP, and authenticate. On successful OTP verification, look up the user by phone number in the backend and establish their session. If no user is found with that phone number, show an appropriate error message directing them to register first.",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -188,18 +349,6 @@
     {
       "id": "AR-4",
       "summary": "Level income tracking system",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-5",
-      "summary": "Loan referral income tracking",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Member referral income tracking",
       "reqIds": [],
       "status": "pending"
     },
@@ -266,6 +415,74 @@
       "summary": "Add a 1% withdrawal limit validation in the backend withdrawal request creation logic in backend/main.mo that calculates the maximum allowed withdrawal amount as 1% of the user's current balance and rejects withdrawal requests that exceed this limit",
       "reqIds": [
         "REQ-21"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Display support and customer care WhatsApp contact number 9422018674",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Display total team count/members for each user",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Display total earnings summary for each user",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Change entire app color scheme to red as the primary brand color across all components, pages, and layouts",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Add white background color and loan/banking service sections: KYC loan, private salary loan, business loan, zero balance account, and credit card",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Add a backend query function that returns the total level income earned by the calling user — the cumulative sum of all level rewards the user has been credited for achieving MLM levels.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Remove loan referral and member referral income data from the backend's total earnings calculation. The getTotalEarnings (or equivalent) query in backend/main.mo should no longer include loan referral commission or member referral income components if those features are being retired from the UI. Keep level income in the total earnings calculation.",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-33",
+      "summary": "Show referral link only in the admin panel, not in the main user-facing app",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Remove the referral link display and the ReferralLinkGenerator component from all user-facing pages and layouts (MainLayout, DashboardPage, and any other non-admin pages where it currently appears), so that referral links are no longer visible to regular members.",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-36",
+      "summary": "Update the backend actor in backend/main.mo to support member phone number authentication: add a function to initiate OTP generation for a given phone number (returning the OTP or storing it server-side), and a function to verify the OTP and return the associated user's principal. Add a query to look up a registered user profile by phone number so the frontend can authenticate members via mobile number.",
+      "reqIds": [
+        "REQ-47"
       ],
       "status": "pending"
     }

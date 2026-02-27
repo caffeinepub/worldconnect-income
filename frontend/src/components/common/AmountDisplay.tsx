@@ -1,28 +1,44 @@
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface AmountDisplayProps {
-  amount: number | bigint;
+  amount: number;
   size?: 'sm' | 'md' | 'lg';
   showSign?: boolean;
   className?: string;
 }
 
-export default function AmountDisplay({ amount, size = 'md', showSign = false, className = '' }: AmountDisplayProps) {
-  const numAmount = typeof amount === 'bigint' ? Number(amount) : amount;
-  const isPositive = numAmount >= 0;
-  const sign = showSign ? (isPositive ? '+' : '') : '';
+export default function AmountDisplay({
+  amount,
+  size = 'md',
+  showSign = false,
+  className,
+}: AmountDisplayProps) {
+  const isPositive = amount >= 0;
+  const isNegative = amount < 0;
 
   const sizeClasses = {
     sm: 'text-sm',
     md: 'text-base',
-    lg: 'text-2xl font-bold',
+    lg: 'text-lg',
   };
 
-  const colorClass = isPositive ? 'text-primary' : 'text-destructive';
+  const colorClass = isNegative
+    ? 'text-destructive'
+    : 'text-red-600';
+
+  const formatted = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(Math.abs(amount));
+
+  const sign = showSign ? (isNegative ? '-' : '+') : isNegative ? '-' : '';
 
   return (
-    <span className={`font-semibold ${sizeClasses[size]} ${colorClass} ${className}`}>
-      {sign}₹{numAmount.toLocaleString('en-IN')}
+    <span className={cn(sizeClasses[size], colorClass, 'font-semibold', className)}>
+      {sign}{formatted}
     </span>
   );
 }

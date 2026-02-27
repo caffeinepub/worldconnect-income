@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import { UserProfile, MemberReferral, LoanReferral, WithdrawalRequest } from '../backend';
+import { UserProfile, MemberReferral, LoanReferral, WithdrawalRequest, LoanReferralRecord } from '../backend';
 import { Principal } from '@dfinity/principal';
 
 // User Profile Queries
@@ -105,6 +105,7 @@ export function useCreateWithdrawalRequest() {
       queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
       queryClient.invalidateQueries({ queryKey: ['callerWithdrawalRequests'] });
       queryClient.invalidateQueries({ queryKey: ['pendingWithdrawalRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['allWithdrawalRequests'] });
     },
   });
 }
@@ -123,6 +124,19 @@ export function useGetCallerWithdrawalRequests() {
 }
 
 // Admin Withdrawal Operations
+export function useGetAllWithdrawalRequests() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<WithdrawalRequest[]>({
+    queryKey: ['allWithdrawalRequests'],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getAllWithdrawalRequests();
+    },
+    enabled: !!actor && !actorFetching,
+  });
+}
+
 export function useGetPendingWithdrawalRequests() {
   const { actor, isFetching: actorFetching } = useActor();
 
@@ -147,6 +161,7 @@ export function useApproveWithdrawalRequest() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pendingWithdrawalRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['allWithdrawalRequests'] });
       queryClient.invalidateQueries({ queryKey: ['callerWithdrawalRequests'] });
     },
   });
@@ -163,6 +178,7 @@ export function useRejectWithdrawalRequest() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pendingWithdrawalRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['allWithdrawalRequests'] });
       queryClient.invalidateQueries({ queryKey: ['callerWithdrawalRequests'] });
     },
   });
@@ -195,6 +211,35 @@ export function useIsCallerAdmin() {
     },
     enabled: !!actor && !actorFetching,
     retry: false,
+  });
+}
+
+// Member Phone OTP Authentication
+export function useRequestMemberOTP() {
+  const { actor } = useActor();
+
+  return useMutation({
+    mutationFn: async (phoneNumber: string) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.generateOTPForPhone(phoneNumber);
+    },
+  });
+}
+
+export function useVerifyMemberOTP() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ phoneNumber, otp }: { phoneNumber: string; otp: string }) => {
+      if (!actor) throw new Error('Actor not available');
+      const result = await actor.verifyPhoneAndLogin(phoneNumber, otp);
+      return result;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['isAdmin'] });
+    },
   });
 }
 
@@ -233,7 +278,7 @@ export function useAddMemberReferral() {
   });
 }
 
-// Loan Referrals
+// Loan Referrals (legacy)
 export function useGetAllLoanReferrals() {
   const { actor, isFetching: actorFetching } = useActor();
 
@@ -265,5 +310,103 @@ export function useAddLoanReferral() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['loanReferrals'] });
     },
+  });
+}
+
+// Loan Referral Records (new)
+export function useSubmitLoanReferral() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      borrowerName,
+      phoneNumber,
+      loanAmount,
+      notes,
+    }: {
+      borrowerName: string;
+      phoneNumber: string;
+      loanAmount: bigint;
+      notes: string;
+    }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.submitLoanReferral(borrowerName, phoneNumber, loanAmount, notes);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userLoanReferralRecords'] });
+      queryClient.invalidateQueries({ queryKey: ['totalLoanReferralCommission'] });
+      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['totalEarnings'] });
+    },
+  });
+}
+
+export function useGetUserLoanReferralRecords(user: Principal | undefined) {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<LoanReferralRecord[]>({
+    queryKey: ['userLoanReferralRecords', user?.toString()],
+    queryFn: async () => {
+      if (!actor || !user) return [];
+      return actor.getUserLoanReferralRecords(user);
+    },
+    enabled: !!actor && !actorFetching && !!user,
+  });
+}
+
+export function useGetTotalLoanReferralCommission() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<bigint>({
+    queryKey: ['totalLoanReferralCommission'],
+    queryFn: async () => {
+      if (!actor) return BigInt(0);
+      return actor.getTotalLoanReferralCommission();
+    },
+    enabled: !!actor && !actorFetching,
+  });
+}
+
+// Team Size
+export function useGetTotalTeamSize() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<bigint>({
+    queryKey: ['totalTeamSize'],
+    queryFn: async () => {
+      if (!actor) return BigInt(0);
+      return actor.getTotalTeamSize();
+    },
+    enabled: !!actor && !actorFetching,
+    refetchInterval: 60000,
+  });
+}
+
+// Total Earnings
+export function useGetTotalEarnings() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<bigint>({
+    queryKey: ['totalEarnings'],
+    queryFn: async () => {
+      if (!actor) return BigInt(0);
+      return actor.getTotalEarnings();
+    },
+    enabled: !!actor && !actorFetching,
+  });
+}
+
+// Level Income
+export function useGetTotalLevelIncome() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<bigint>({
+    queryKey: ['totalLevelIncome'],
+    queryFn: async () => {
+      if (!actor) return BigInt(0);
+      return actor.getTotalLevelIncome();
+    },
+    enabled: !!actor && !actorFetching,
   });
 }

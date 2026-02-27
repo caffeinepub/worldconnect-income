@@ -1,157 +1,197 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import React, { useState } from 'react';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useRegisterUser } from '../hooks/useQueries';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { useActor } from '../hooks/useActor';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
-import { Principal } from '@icp-sdk/core/principal';
-import { getUrlParameter } from '../utils/urlParams';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { UserPlus, Phone, User, IndianRupee, AlertCircle } from 'lucide-react';
+import { Principal } from '@dfinity/principal';
 
 export default function RegistrationPage() {
+  const navigate = useNavigate();
+  const { login, loginStatus, identity } = useInternetIdentity();
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [referrerCode, setReferrerCode] = useState('');
-  const [paymentProcessing, setPaymentProcessing] = useState(false);
-  const navigate = useNavigate();
-  const { login, identity } = useInternetIdentity();
-  const registerMutation = useRegisterUser();
+  const [referrerInput, setReferrerInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const REGISTRATION_FEE = 100;
-
-  useEffect(() => {
-    const urlReferrer = getUrlParameter('referrer');
-    if (urlReferrer) {
-      setReferrerCode(urlReferrer);
+  const handleLogin = async () => {
+    try {
+      await login();
+    } catch (error: any) {
+      console.error('Login error:', error);
     }
-  }, []);
+  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleRegister = async () => {
+    if (!actor || !identity) return;
+    if (!name.trim()) { setError('Name is required'); return; }
+    if (!phoneNumber.trim()) { setError('Phone number is required'); return; }
 
-    if (!/^[a-zA-Z\s]{2,50}$/.test(name)) {
-      toast.error('Please enter a valid name (2-50 characters, letters only)');
-      return;
-    }
-
-    if (!/^\d{10}$/.test(phoneNumber)) {
-      toast.error('Please enter a valid 10-digit phone number');
-      return;
-    }
+    setIsLoading(true);
+    setError('');
 
     try {
-      if (!identity) {
-        await login();
-      }
-
-      setPaymentProcessing(true);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
       let referrerPrincipal: Principal | null = null;
-      if (referrerCode.trim()) {
+      if (referrerInput.trim()) {
         try {
-          referrerPrincipal = Principal.fromText(referrerCode);
-        } catch (error) {
-          toast.error('Invalid referrer code');
-          setPaymentProcessing(false);
+          referrerPrincipal = Principal.fromText(referrerInput.trim());
+        } catch {
+          setError('Invalid referrer ID format');
+          setIsLoading(false);
           return;
         }
       }
 
-      await registerMutation.mutateAsync({
-        name,
-        phoneNumber,
-        referrer: referrerPrincipal,
-        paymentAmount: BigInt(REGISTRATION_FEE),
-      });
-
-      toast.success('Registration successful! Welcome to the platform.');
+      await actor.registerUser(name.trim(), phoneNumber.trim(), referrerPrincipal, BigInt(100));
+      queryClient.invalidateQueries();
       navigate({ to: '/dashboard' });
-    } catch (error: any) {
-      toast.error(error.message || 'Registration failed');
-      setPaymentProcessing(false);
+    } catch (err: any) {
+      setError(err.message || 'Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 p-4">
-      <Card className="w-full max-w-md border-purple-200 shadow-xl">
-        <CardHeader className="space-y-1">
-          <div className="flex justify-center mb-4">
-            <img src="/assets/generated/logo.dim_256x256.png" alt="Logo" className="h-16 w-16" />
+    <div className="min-h-screen bg-gradient-to-br from-red-900 via-red-800 to-red-700 flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-6">
+        {/* Logo/Brand */}
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-red-xl mb-4">
+            <img src="/assets/generated/logo.dim_256x256.png" alt="Logo" className="w-14 h-14 object-contain" />
           </div>
-          <CardTitle className="text-2xl text-center font-display">Create Account</CardTitle>
-          <CardDescription className="text-center">
-            Join our MLM platform with a one-time registration fee of ₹{REGISTRATION_FEE}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Enter your full name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="border-purple-200 focus:border-primary focus:ring-primary"
-              />
+          <h1 className="text-3xl font-heading font-bold text-white">Join FinanceMLM</h1>
+          <p className="text-red-200 mt-1">Start your financial journey today</p>
+        </div>
+
+        <Card className="shadow-red-xl border-red-200">
+          <CardHeader>
+            <CardTitle className="text-xl font-heading text-center">Create Account</CardTitle>
+            <CardDescription className="text-center">
+              Register to join our network and start earning
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Registration Fee Notice */}
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
+              <IndianRupee className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-red-800">Registration Fee: ₹100</p>
+                <p className="text-xs text-red-600">One-time fee to activate your account</p>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="Enter 10-digit phone number"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                maxLength={10}
-                required
-                className="border-purple-200 focus:border-primary focus:ring-primary"
-              />
-            </div>
+            {!identity ? (
+              <>
+                <p className="text-sm text-muted-foreground text-center">
+                  First, connect your identity to proceed with registration
+                </p>
+                <Button
+                  onClick={handleLogin}
+                  disabled={loginStatus === 'logging-in'}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white"
+                  size="lg"
+                >
+                  {loginStatus === 'logging-in' ? (
+                    <span className="flex items-center gap-2">
+                      <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                      Connecting...
+                    </span>
+                  ) : (
+                    'Connect Identity'
+                  )}
+                </Button>
+              </>
+            ) : (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="name"
+                      placeholder="Enter your full name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="pl-10 focus:ring-red-500 focus:border-red-500"
+                    />
+                  </div>
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="referrer">Referrer Code (Optional)</Label>
-              <Input
-                id="referrer"
-                type="text"
-                placeholder="Enter referrer code if you have one"
-                value={referrerCode}
-                onChange={(e) => setReferrerCode(e.target.value)}
-                className="border-purple-200 focus:border-primary focus:ring-primary"
-              />
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="Enter your phone number"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      className="pl-10 focus:ring-red-500 focus:border-red-500"
+                    />
+                  </div>
+                </div>
 
-            <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200">
-              <p className="text-sm font-semibold text-foreground mb-1">Registration Fee</p>
-              <p className="text-2xl font-bold text-primary">₹{REGISTRATION_FEE}</p>
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="referrer">Referrer ID (Optional)</Label>
+                  <Input
+                    id="referrer"
+                    placeholder="Enter referrer's principal ID"
+                    value={referrerInput}
+                    onChange={(e) => setReferrerInput(e.target.value)}
+                    className="focus:ring-red-500 focus:border-red-500"
+                  />
+                </div>
 
-            <Button
-              type="submit"
-              disabled={paymentProcessing || registerMutation.isPending}
-              className="w-full bg-primary hover:bg-primary/90 text-white"
-            >
-              {paymentProcessing || registerMutation.isPending ? 'Processing...' : 'Pay & Register'}
-            </Button>
-          </form>
+                {error && (
+                  <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-lg border border-red-200">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    {error}
+                  </div>
+                )}
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground">
+                <Button
+                  onClick={handleRegister}
+                  disabled={isLoading || !name || !phoneNumber}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold"
+                  size="lg"
+                >
+                  {isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                      Registering...
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <UserPlus className="w-5 h-5" />
+                      Register (Pay ₹100)
+                    </span>
+                  )}
+                </Button>
+              </>
+            )}
+
+            <div className="text-center text-sm text-muted-foreground">
               Already have an account?{' '}
-              <button onClick={() => navigate({ to: '/login' })} className="text-primary hover:underline font-medium">
+              <button
+                onClick={() => navigate({ to: '/login' })}
+                className="text-red-600 hover:text-red-700 font-medium"
+              >
                 Login here
               </button>
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

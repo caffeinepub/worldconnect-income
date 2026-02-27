@@ -1,60 +1,34 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useIsCallerAdmin } from '../hooks/useQueries';
-import AdminLayout from '../components/layout/AdminLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Settings } from 'lucide-react';
 
 export default function AdminSettingsPage() {
-  const { data: isAdmin, isLoading } = useIsCallerAdmin();
-
-  if (isLoading) {
-    return (
-      <AdminLayout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </AdminLayout>
-    );
-  }
-
-  if (!isAdmin) {
-    return (
-      <AdminLayout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Card className="max-w-md">
-            <CardHeader>
-              <CardTitle className="text-destructive">Access Denied</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                You do not have permission to access this page.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </AdminLayout>
-    );
-  }
-
   return (
-    <AdminLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-navy-700">System Settings</h1>
-          <p className="text-muted-foreground mt-2">Configure system parameters</p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-red-700 to-red-600 rounded-2xl p-6 text-white shadow-red-lg">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+            <Settings className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-heading font-bold">System Settings</h1>
+            <p className="text-red-200 text-sm">Configure system parameters</p>
+          </div>
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Coming Soon</CardTitle>
-            <CardDescription>System configuration features will be available soon</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              You'll be able to configure commission rates, fees, and other system parameters here.
-            </p>
-          </CardContent>
-        </Card>
       </div>
-    </AdminLayout>
+
+      <Card className="border-red-100 shadow-red-sm">
+        <CardHeader>
+          <CardTitle className="font-heading">Settings</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8 text-muted-foreground">
+            <Settings className="w-8 h-8 mx-auto mb-2 opacity-40" />
+            <p>System settings configuration coming soon</p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

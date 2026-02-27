@@ -1,15 +1,42 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-24T09:13:27.305Z",
-  "summary": "The implementation successfully addresses both backend (REQ-21) and frontend (REQ-22) requirements for the 1% withdrawal limit. The backend validation logic is present in backend/main.mo, and the frontend implements client-side validation with clear display of the maximum allowed amount in WithdrawalPage.tsx.",
-  "missing_requirements": [],
-  "hallucinated_features": [],
-  "confidence": 0.95,
+  "generatedAt": "2026-02-24T13:25:25.679Z",
+  "summary": "The diff implements both REQ-46 (Member Login tab with OTP flow in LoginPage.tsx) and REQ-47 (backend functions for OTP generation, verification, and user lookup by phone). Most acceptance criteria are met. However, the backend function naming diverges from the spec (generateOTPForPhone instead of requestMemberOTP, verifyPhoneAndLogin instead of verifyMemberOTP returning Bool), and verifyPhoneAndLogin returns ?Principal rather than Bool. The getUserByPhone query is implemented as getUserProfileByPhoneNumber. The OTP is hardcoded as '1234' (simulated, acceptable). The admin login flow appears unchanged.",
+  "missing_requirements": [
+    {
+      "id": "REQ-47",
+      "requirement": "Backend exposes a function verifyMemberOTP(phone: Text, otp: Text): async Bool that validates the submitted OTP.",
+      "reason": "The diff implements verifyPhoneAndLogin which returns ?Principal instead of Bool. While functionally similar, the AC specifically requires a Bool-returning verifyMemberOTP function.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-47",
+      "requirement": "Backend exposes a query getUserByPhone(phone: Text): async ?UserProfile that returns the user profile matching the given phone number.",
+      "reason": "The function is named getUserProfileByPhoneNumber rather than getUserByPhone as specified in the AC. While functionally equivalent, the AC specifies the exact function name.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "A migration.mo file was added to handle state migration for the new phoneToPrincipal and otpRecords maps.",
+      "reason": "The build request did not mention or request a migration module. While it may be necessary for deployment, it was not part of the specified requirements.",
+      "evidence": [
+        "backend/migration.mo"
+      ]
+    }
+  ],
+  "confidence": 0.82,
   "changed_files": [
     "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/pages/WithdrawalPage.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/LoginPage.tsx",
     "project_state.json"
   ]
 }

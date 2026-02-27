@@ -1,21 +1,29 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Implement 1% withdrawal limit",
+  "title": "Mobile Number Login for Regular Members",
   "requirements": [
     {
-      "id": "REQ-22",
-      "summary": "Update withdrawal form to display and validate 1% withdrawal limit",
+      "id": "REQ-46",
+      "summary": "Extend LoginPage to support mobile number login with OTP verification for regular members, allowing any user to authenticate via their registered phone number",
       "acceptanceCriteria": [
-        "Maximum withdrawal amount (1% of balance) is clearly displayed on the withdrawal page",
-        "Form validation prevents submission of amounts exceeding the 1% limit",
-        "Error message shows the exact maximum amount allowed when user enters too much"
+        "LoginPage displays a mobile number login option for regular members (distinct from the admin login flow).",
+        "User can enter their mobile number and request an OTP.",
+        "OTP input field appears after mobile number submission.",
+        "On correct OTP entry, the user is authenticated and redirected to the dashboard.",
+        "If the phone number is not registered, an error message is shown.",
+        "Admin login (phone 9422018674) continues to work as before."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/WithdrawalPage.tsx",
+          "path": "frontend/src/pages/LoginPage.tsx",
           "operation": "modify",
-          "description": "Add display of maximum allowed withdrawal amount (1% of user's balance) above the amount input field. Implement client-side validation that calculates maxWithdrawal = balance * 0.01 and prevents form submission when entered amount exceeds this limit. Show error message indicating the exact maximum amount allowed (formatted as INR) when validation fails. Use the existing useGetCallerUserProfile hook to access current balance and integrate with existing form validation logic."
+          "description": "Add a 'Member Login' tab or section alongside the existing admin phone login flow. Implement a two-step member authentication flow: (1) User enters mobile number and requests OTP via the backend's requestMemberOTP/generateOTPForPhone method; (2) User enters the received OTP and submits for verification via verifyPhoneAndLogin. On successful verification, retrieve the user's principal from the backend response and establish their session. If the phone number is not registered or OTP is invalid, display appropriate error messages. Ensure the existing admin login flow for phone number 9422018674 remains unchanged and functional."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add two new mutation hooks for member phone authentication: useRequestMemberOTP (calls actor.generateOTPForPhone) and useVerifyMemberOTP (calls actor.verifyPhoneAndLogin). The verify mutation should return the authenticated principal on success or null if verification fails. Include proper error handling and loading states for both mutations. These hooks will be consumed by the updated LoginPage component to implement the member OTP login flow."
         }
       ]
     }

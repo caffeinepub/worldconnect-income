@@ -16,13 +16,15 @@ export interface MemberReferral {
     referrer: Principal;
     newMember: Principal;
 }
-export interface WithdrawalRequest {
+export interface LoanReferralRecord {
     id: bigint;
-    status: WithdrawalStatus;
-    bankDetails: string;
-    user: Principal;
+    referrer: Principal;
+    loanAmount: bigint;
+    commission: bigint;
+    notes: string;
     timestamp: Time;
-    amount: bigint;
+    phoneNumber: string;
+    borrowerName: string;
 }
 export type WithdrawalStatus = {
     __kind__: "pending";
@@ -34,6 +36,14 @@ export type WithdrawalStatus = {
     __kind__: "rejected";
     rejected: string;
 };
+export interface WithdrawalRequest {
+    id: bigint;
+    status: WithdrawalStatus;
+    bankDetails: string;
+    user: Principal;
+    timestamp: Time;
+    amount: bigint;
+}
 export interface UserProfile {
     active: boolean;
     referrer?: Principal;
@@ -55,6 +65,8 @@ export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createWithdrawalRequest(amount: bigint, bankDetails: string): Promise<bigint>;
     deposit(amount: bigint): Promise<void>;
+    generateOTPForPhone(phoneNumber: string): Promise<string>;
+    getAllLoanReferralRecords(): Promise<Array<LoanReferralRecord>>;
     getAllLoanReferrals(): Promise<Array<LoanReferral>>;
     getAllMemberReferrals(): Promise<Array<MemberReferral>>;
     getAllWithdrawalRequests(): Promise<Array<WithdrawalRequest>>;
@@ -62,12 +74,22 @@ export interface backendInterface {
     getCallerUserRole(): Promise<UserRole>;
     getCallerWithdrawalRequests(): Promise<Array<WithdrawalRequest>>;
     getLoanReferral(member: Principal): Promise<LoanReferral | null>;
+    getLoanReferralRecord(referralId: bigint): Promise<LoanReferralRecord | null>;
     getMemberReferral(newMember: Principal): Promise<MemberReferral | null>;
     getPendingWithdrawalRequests(): Promise<Array<WithdrawalRequest>>;
+    getTotalEarnings(): Promise<bigint>;
+    getTotalLevelIncome(): Promise<bigint>;
+    getTotalLoanReferralCommission(): Promise<bigint>;
+    getTotalTeamSize(): Promise<bigint>;
+    getUserLoanReferralRecords(user: Principal): Promise<Array<LoanReferralRecord>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
+    getUserProfileByPhoneNumber(phoneNumber: string): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
+    markLevelRewarded(user: Principal, level: bigint): Promise<boolean>;
     registerUser(name: string, phoneNumber: string, referrer: Principal | null, paymentAmount: bigint): Promise<void>;
     rejectWithdrawalRequest(requestId: bigint, reason: string): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    updateLevel(level: bigint): Promise<void>;
+    submitLoanReferral(borrowerName: string, phoneNumber: string, loanAmount: bigint, notes: string): Promise<bigint>;
+    updateLevel(user: Principal, level: bigint): Promise<void>;
+    verifyPhoneAndLogin(phoneNumber: string, otp: string): Promise<Principal | null>;
 }
